@@ -1,6 +1,9 @@
-def main():
-    print("Hello from gemeni-pdf!")
+import os
 
+from dotenv import load_dotenv
+from google import genai
+from pydantic import BaseModel, Field
 
-if __name__ == "__main__":
-    main()
+load_dotenv()
+
+client = genai.Client(api_key=os.getenv("GEMENI_API_KEY"))
