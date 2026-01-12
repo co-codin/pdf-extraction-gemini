@@ -38,13 +38,22 @@ client = genai.Client(api_key=os.getenv("GEMENI_API_KEY"))
 
 file_in = 'invoice.pdf'
 file_out = 'invoice_annotated.pdf'
-pdf = client.files.upload(file_in)
+pdf = client.files.upload(file=file_in)
 
 prompt = """
 Extract the invoice recipient name and invoice total.
 Return ONLY JSON that matches the provided schema.
 If a field is missing, set it to null (and bounding_box to [0,0,0,0]).
 """
+
+response = client.models.generate_content(
+    model="gemini-2.5-flash",
+    contents=[pdf, prompt],
+    config={
+        "response_mime_type": "application/json",
+        "response_schema": InvoiceModel
+    },
+)
 
 invoice = InvoiceModel.model_validate_json(response.text)
 print(invoice.model_dump())
